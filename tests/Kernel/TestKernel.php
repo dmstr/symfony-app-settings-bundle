@@ -16,6 +16,7 @@ use Dmstr\DoctrineAuditLog\Entity\LogEntry;
 use Dmstr\OpenApiJsonSchema\OpenApiJsonSchemaBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Gedmo\Loggable\Entity\MappedSuperclass\AbstractLogEntry;
 use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -180,6 +181,15 @@ final class TestKernel extends Kernel implements CompilerPassInterface
             'orm' => [
                 'enable_native_lazy_objects' => true,
                 'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
+                // AUTO ids of the audit-log entity: on DBAL 3 the ORM would
+                // pick SEQUENCE and ask for `dmstr_log_entries_id_seq`, but
+                // the table was created as `ext_log_entries` with a SERIAL
+                // column and renamed, so its sequence keeps the old name.
+                // IDENTITY reads the id back with LASTVAL() and works with
+                // either name.
+                'identity_generation_preferences' => [
+                    PostgreSQLPlatform::class => 'identity',
+                ],
                 // The bundle maps its own entity (prepended configuration);
                 // only the audit-log entity and its Gedmo superclass are
                 // mapped here, as a host application would.
