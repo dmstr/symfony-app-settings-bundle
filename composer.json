@@ -1,0 +1,65 @@
+{
+    "name": "dmstr/symfony-app-settings-bundle",
+    "description": "Symfony bundle for runtime application settings: sections contributed by the app or bundles with a JSON schema each, stored as JSON, validated on write, exposed as an admin-only API Platform resource and readable as typed values with defaults.",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "keywords": [
+        "symfony",
+        "bundle",
+        "settings",
+        "json-schema",
+        "api-platform"
+    ],
+    "authors": [
+        {
+            "name": "diemeisterei GmbH",
+            "homepage": "https://diemeisterei.de"
+        }
+    ],
+    "require": {
+        "php": ">=8.5",
+        "api-platform/core": "^4.4",
+        "dmstr/openapi-json-schema-bundle": "^0.5",
+        "doctrine/dbal": "^3.8",
+        "doctrine/doctrine-bundle": "^2.14",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
+        "doctrine/migrations": "^3.9",
+        "doctrine/orm": "^3.3",
+        "gedmo/doctrine-extensions": "^3.20",
+        "opis/json-schema": "^2.6",
+        "symfony/config": "^7.4",
+        "symfony/dependency-injection": "^7.4",
+        "symfony/doctrine-bridge": "^7.4",
+        "symfony/expression-language": "^7.4",
+        "symfony/framework-bundle": "^7.4",
+        "symfony/http-kernel": "^7.4",
+        "symfony/security-bundle": "^7.4",
+        "symfony/uid": "^7.4",
+        "symfony/validator": "^7.4",
+        "symfony/yaml": "^7.4"
+    },
+    "require-dev": {
+        "ext-pdo_pgsql": "*",
+        "dmstr/doctrine-audit-log-bundle": "^0.4",
+        "phpunit/phpunit": "^12.0 || ^13.0",
+        "symfony/browser-kit": "^7.4",
+        "symfony/console": "^7.4",
+        "symfony/http-client": "^7.4"
+    },
+    "suggest": {
+        "dmstr/doctrine-audit-log-bundle": "Provides a Gedmo loggable listener and log entry entity, so every settings write is recorded in an audit log."
+    },
+    "autoload": {
+        "psr-4": {
+            "Dmstr\\AppSettings\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Dmstr\\AppSettings\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

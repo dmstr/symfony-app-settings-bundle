@@ -1,0 +1,43 @@
+# file generated with AI assistance: Claude Code - 2026-11-25 15:36:23 UTC
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # Collects every service tagged by DmstrAppSettingsBundle::CONTRIBUTOR_TAG
+    # (autoconfigured for SettingsContributorInterface).
+    Dmstr\AppSettings\Registry\SectionRegistry:
+        arguments:
+            $contributors: !tagged_iterator dmstr_app_settings.contributor
+
+    Dmstr\AppSettings\Reader\SettingsReader: ~
+
+    # State providers of the ApplicationSetting resource: every registered
+    # section is listed and readable, unsaved ones with their defaults.
+    Dmstr\AppSettings\State\SectionItemProvider:
+        tags: ['api_platform.state_provider']
+
+    Dmstr\AppSettings\State\SectionCollectionProvider:
+        tags: ['api_platform.state_provider']
+
+    # Validates the stored values against the section schema.
+    Dmstr\AppSettings\Validator\MatchesSectionSchemaValidator:
+        tags: ['validator.constraint_validator']
+
+    # Primes SectionSchemaHolder for ApplicationSetting::getJsonSchema().
+    # Priority 20 places it inside JsonFieldSchemaDecorator (priority 10),
+    # which reads the holder; the decorator itself only delegates.
+    Dmstr\AppSettings\OpenApi\SectionSchemaFactoryDecorator:
+        decorates: 'api_platform.json_schema.schema_factory'
+        decoration_priority: 20
+        arguments:
+            $decorated: '@.inner'
+
+    # Announces the permission this bundle checks at the permission tag the
+    # host application's voter reads (container tag, plain string; the
+    # application maps it to roles).
+    Dmstr\AppSettings\Security\AppSettingsPermissions:
+        tags:
+            - { name: za7_core.permission, permission: !php/const Dmstr\AppSettings\Security\AppSettingsPermissions::SETTING_MANAGE }

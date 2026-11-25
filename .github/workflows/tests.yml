@@ -1,0 +1,56 @@
+# file generated with AI assistance: Claude Code - 2026-11-25 15:36:23 UTC
+name: Tests
+
+on:
+  push:
+    branches: [main, master, "feature/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.5"]
+    name: PHPUnit (PHP ${{ matrix.php }})
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: app_settings_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app_settings_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: "postgresql://app:app@127.0.0.1:5432/app_settings_test?serverVersion=18&charset=utf8"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_pgsql
+          coverage: none
+
+      - run: composer validate --strict
+
+      - run: composer install --no-interaction --no-progress
+
+      - name: Unit tests
+        run: vendor/bin/phpunit --testsuite unit
+
+      - name: Integration tests (kernel and PostgreSQL)
+        run: vendor/bin/phpunit --testsuite integration

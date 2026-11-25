@@ -1,0 +1,6 @@
+# file generated with AI assistance: Claude Code - 2026-11-25 15:36:23 UTC
+/vendor/
+/composer.lock
+/.phpunit.cache/
+.phpunit.result.cache
+/var/
